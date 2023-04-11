@@ -1,11 +1,22 @@
-import { App, Stack, StackProps } from 'aws-cdk-lib';
+import path from 'path';
+import { App, Duration, Stack, StackProps } from 'aws-cdk-lib';
+import { FunctionUrlAuthType } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
 export class MyStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
     super(scope, id, props);
 
-    // define resources here...
+    const lambda = new NodejsFunction(this, 'Lambda', {
+      functionName: 'TestLambdaStreamResponse',
+      entry: path.join(__dirname, 'lambda.ts'),
+      timeout: Duration.seconds(30),
+    });
+
+    lambda.addFunctionUrl({
+      authType: FunctionUrlAuthType.NONE,
+    });
   }
 }
 
